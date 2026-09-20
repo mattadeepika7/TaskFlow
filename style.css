@@ -58,3 +58,6 @@ button {
 #completed {
     min-height: 350px;
 }
+.task {
+    touch-action: none;
+}
