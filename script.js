@@ -1,10 +1,8 @@
 let tasks = [];
 let count = 0;
+let draggedTask = null;
 
-
-// Add Task
 function addTask() {
-
     let name = document.getElementById("task").value;
 
     if (name == "") {
@@ -19,16 +17,12 @@ function addTask() {
     });
 
     count++;
-
     document.getElementById("task").value = "";
 
     showTasks();
 }
 
-
-// Show Tasks
 function showTasks() {
-
     document.getElementById("todo").innerHTML = "";
     document.getElementById("progress").innerHTML = "";
     document.getElementById("completed").innerHTML = "";
@@ -46,18 +40,21 @@ function showTasks() {
             "<button class='edit' onclick='editTask(" + i + ")'>Edit</button>" +
             "<button class='delete' onclick='deleteTask(" + i + ")'>Delete</button>";
 
-        task.ondragstart = function(event) {
-            event.dataTransfer.setData("index", i);
+        // Laptop drag
+        task.ondragstart = function() {
+            draggedTask = i;
         };
+
+        // Mobile touch
+        task.addEventListener("touchstart", function() {
+            draggedTask = i;
+        });
 
         document.getElementById(tasks[i].status).appendChild(task);
     }
 }
 
-
-// Edit
 function editTask(i) {
-
     let name = prompt("Enter new task:", tasks[i].name);
 
     if (name != null && name != "") {
@@ -66,31 +63,21 @@ function editTask(i) {
     }
 }
 
-
-// Delete
 function deleteTask(i) {
-
     tasks.splice(i, 1);
-
     showTasks();
 }
 
-
-// Allow Drop
 function allowDrop(event) {
-
     event.preventDefault();
 }
 
-
-// Drop
 function drop(event, status) {
-
     event.preventDefault();
 
-    let index = event.dataTransfer.getData("index");
-
-    tasks[index].status = status;
-
-    showTasks();
+    if (draggedTask != null) {
+        tasks[draggedTask].status = status;
+        draggedTask = null;
+        showTasks();
+    }
 }
